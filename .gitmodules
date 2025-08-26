@@ -1,3 +1,6 @@
 [submodule "include-files"]
 	path = include-files
 	url = https://github.com/pandoc-ext/include-files
+[submodule "syllabus_factory"]
+	path = syllabus_factory
+	url = https://github.com/t-shoemaker/syllabus_factory
