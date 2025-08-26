@@ -23,6 +23,9 @@ define check-docx-ref
 	@test -f "$(DOCX_REF)" || { echo "Missing reference docx: $(DOCX_REF). Run: make get-ref" >&2; exit 1; }
 endef
 
+$(CONFIG_FILE):
+	cp template.md $(CONFIG_FILE)
+
 $(OUTPUT_DIR)/docx $(OUTPUT_DIR)/html:
 	@mkdir -p $@
 
@@ -96,4 +99,3 @@ help:
 	@echo "  open CONFIG=<name>      - Open the last rendered file"
 	@echo "  clean CONFIG=<name>     - Clean a config's generated files"
 	@echo "  clean-all               - Clean all generated files"
-	@echo "  get-ref                 - Download reference docx template"
