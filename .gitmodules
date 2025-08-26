@@ -1,0 +1,3 @@
+[submodule "include-files"]
+	path = include-files
+	url = https://github.com/pandoc-ext/include-files
