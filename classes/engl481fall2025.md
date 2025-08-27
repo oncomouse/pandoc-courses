@@ -329,11 +329,13 @@ Each week, you will produce:
 1. Two [Discussion Questions](#discussion-questions) (except days we have readings on Friday)
 2. One [Writing Exercise](#list-of-writing-exercises)
 
-{% include schedule.html %}
+%course_schedule%
 
 # Policies
 
-{% include university-policies.md %}
+```{.include}
+includes/university-policies.md
+```
 
 ## Department Policies
 
