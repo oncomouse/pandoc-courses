@@ -42,5 +42,7 @@ course:
 %course_schedule%
 
 ```{.include}
+includes/university-policies.md
+includes/department-policies.md
 includes/policies.md
 ```
