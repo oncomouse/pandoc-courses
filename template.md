@@ -39,6 +39,8 @@ course:
 
 # Schedule
 
-{% include schedule.html %}
+%course_schedule%
 
-{% include policies.md %}
+```{.include}
+includes/policies.md
+```
