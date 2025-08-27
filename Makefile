@@ -7,6 +7,15 @@ SYLLABUS_DIR := $(realpath classes)
 OUTPUT_DIR   := $(realpath output)
 DOCX_REF     := $(realpath reference/syllabus-reference.docx)
 
+FILTERS := --lua-filter=$(FILTER_DIR)/fix-title.lua \
+	   --lua-filter=$(FILTER_DIR)/fix-includes.lua \
+	   --lua-filter=include-files/include-files.lua \
+	   --lua-filter=$(FILTER_DIR)/schedule-filter.lua \
+	   --lua-filter=$(FILTER_DIR)/syllabus-header.lua \
+	   --lua-filter=syllabus_factory/filters/tables.lua \
+	   --lua-filter=syllabus_factory/filters/linebreaks.lua
+
+
 ifdef CONFIG
     CONFIG_FILE := $(SYLLABUS_DIR)/$(CONFIG).md
     MD_OUTPUT   := $(OUTPUT_DIR)/md/$(CONFIG).md
@@ -34,25 +43,13 @@ $(DOCX_OUTPUT): $(CONFIG_FILE) | $(OUTPUT_DIR)/docx
 	@pandoc -s $(CONFIG_FILE) \
 		-f markdown -t docx \
 		--reference-doc=$(DOCX_REF) \
-		--lua-filter=$(FILTER_DIR)/fix-title.lua \
-		--lua-filter=$(FILTER_DIR)/fix-includes.lua \
-		--lua-filter=include-files/include-files.lua \
-		--lua-filter=$(FILTER_DIR)/schedule-filter.lua \
-		--lua-filter=$(FILTER_DIR)/syllabus-header.lua \
-		--lua-filter=syllabus_factory/filters/tables.lua \
-		--lua-filter=syllabus_factory/filters/linebreaks.lua \
+		$(FILTERS) \
 		-o $(DOCX_OUTPUT)
 
 $(HTML_OUTPUT): $(CONFIG_FILE) | $(OUTPUT_DIR)/html
 	@pandoc -s $(CONFIG_FILE) \
 		-f markdown -t html \
-		--lua-filter=$(FILTER_DIR)/fix-title.lua \
-		--lua-filter=$(FILTER_DIR)/fix-includes.lua \
-		--lua-filter=include-files/include-files.lua \
-		--lua-filter=$(FILTER_DIR)/schedule-filter.lua \
-		--lua-filter=$(FILTER_DIR)/syllabus-header.lua \
-		--lua-filter=syllabus_factory/filters/tables.lua \
-		--lua-filter=syllabus_factory/filters/linebreaks.lua \
+		$(FILTERS) \
 		-o $(HTML_OUTPUT)
 
 docx: $(DOCX_OUTPUT)
