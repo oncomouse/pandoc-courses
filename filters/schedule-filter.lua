@@ -107,7 +107,6 @@ function make_schedule(meta)
             day = pandoc.Div({
                 pandoc.Header(meta.course.units and 4 or 3, pandoc.Str(pandoc.utils.stringify(meta.course.number) .. ", Day " .. tostring(count_days) )),
                 pandoc.Para(pandoc.Str("<" .. class_d:fmt(ORG_FORMAT) .. ">"))})
-            count_days = count_days + 1
         end
         if class_d:getweekday() == 1 then
             for _, item in pairs(get_week(meta, week)) do
@@ -119,13 +118,16 @@ function make_schedule(meta)
             table.insert(course_schedule, day)
             if meta.course.classes[meeting] then
                 table.insert(course_schedule, meta.course.classes[meeting][1])
+                count_days = count_days + 1
             end
             meeting = meeting + 1
         elseif index_of(meeting_days, class_d:getweekday()) then
             local current_holiday = is_holiday(meta.course.holidays, class_d)
             if current_holiday then
-                table.insert(course_schedule, day)
-                table.insert(course_schedule, pandoc.Para({pandoc.Strong(pandoc.Str("No class: ")), pandoc.Str(current_holiday)}))
+                if not FORMAT:match("org") then
+                    table.insert(course_schedule, day)
+                    table.insert(course_schedule, pandoc.Para({pandoc.Strong(pandoc.Str("No class: ")), pandoc.Str(current_holiday)}))
+                end
             elseif redefined_day then
                 table.insert(course_schedule, day)
                 table.insert(course_schedule, pandoc.Para({ pandoc.Strong(pandoc.Str("Redefined class: ")), pandoc.Str("Go to your " .. weekdays[redefined_day] .. " classes")}))
@@ -133,6 +135,7 @@ function make_schedule(meta)
                 table.insert(course_schedule, day)
                 if meta.course.classes[meeting] then
                     table.insert(course_schedule, meta.course.classes[meeting][1])
+                    count_days = count_days + 1
                 end
                 meeting = meeting + 1
             end
