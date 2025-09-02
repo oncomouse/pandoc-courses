@@ -99,13 +99,12 @@ function make_schedule(meta)
         table.insert(course_schedule, item)
     end
     week = week + 1
-    count_days = 1
     repeat
         local redefined_day = meta.course.redefined and is_redefined_day(meta.course.redefined, class_d)
         local day = pandoc.Para(pandoc.Strong(pandoc.Str(class_d:fmt(DATE_FORMAT))))
         if FORMAT:match("org") then
             day = pandoc.Div({
-                pandoc.Header(meta.course.units and 4 or 3, pandoc.Str(pandoc.utils.stringify(meta.course.number) .. ", Day " .. tostring(count_days) )),
+                pandoc.Header(meta.course.units and 4 or 3, pandoc.Str(pandoc.utils.stringify(meta.course.number) .. ", Day " .. tostring(meeting) )),
                 pandoc.Para(pandoc.Str("<" .. class_d:fmt(ORG_FORMAT) .. ">"))})
         end
         if class_d:getweekday() == 1 then
@@ -118,9 +117,8 @@ function make_schedule(meta)
             table.insert(course_schedule, day)
             if meta.course.classes[meeting] then
                 table.insert(course_schedule, meta.course.classes[meeting][1])
-                count_days = count_days + 1
+                meeting = meeting + 1
             end
-            meeting = meeting + 1
         elseif index_of(meeting_days, class_d:getweekday()) then
             local current_holiday = is_holiday(meta.course.holidays, class_d)
             if current_holiday then
@@ -135,9 +133,8 @@ function make_schedule(meta)
                 table.insert(course_schedule, day)
                 if meta.course.classes[meeting] then
                     table.insert(course_schedule, meta.course.classes[meeting][1])
-                    count_days = count_days + 1
+                    meeting = meeting + 1
                 end
-                meeting = meeting + 1
             end
         end
         class_d:setday(class_d:getday() + 1)
