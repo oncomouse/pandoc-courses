@@ -6,6 +6,7 @@ local date = require("date")
 
 local course_schedule = {}
 local DATE_FORMAT = "%a %b %d %Y"
+local ORG_FORMAT = "%Y-%b-%d %a"
 
 function index_of(haystack, needle)
     for i, v in ipairs(haystack) do
@@ -98,9 +99,16 @@ function make_schedule(meta)
         table.insert(course_schedule, item)
     end
     week = week + 1
+    count_days = 1
     repeat
         local redefined_day = meta.course.redefined and is_redefined_day(meta.course.redefined, class_d)
         local day = pandoc.Para(pandoc.Strong(pandoc.Str(class_d:fmt(DATE_FORMAT))))
+        if FORMAT:match("org") then
+            day = pandoc.Div({
+                pandoc.Header(meta.course.units and 4 or 3, pandoc.Str(pandoc.utils.stringify(meta.course.number) .. ", Day " .. tostring(count_days) )),
+                pandoc.Para(pandoc.Str("<" .. class_d:fmt(ORG_FORMAT) .. ">"))})
+            count_days = count_days + 1
+        end
         if class_d:getweekday() == 1 then
             for _, item in pairs(get_week(meta, week)) do
                 table.insert(course_schedule, item)

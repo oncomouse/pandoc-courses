@@ -1,4 +1,4 @@
-.PHONY: md docx html open clean clean-all get-ref help
+.PHONY: org md docx html open clean clean-all get-ref help
 .DEFAULT_GOAL := help
 .DELETE_ON_ERROR:
 
@@ -20,6 +20,7 @@ ifdef CONFIG
     CONFIG_FILE := $(SYLLABUS_DIR)/$(CONFIG).md
     MD_OUTPUT   := $(OUTPUT_DIR)/md/$(CONFIG).md
     DOCX_OUTPUT := $(OUTPUT_DIR)/docx/$(CONFIG).docx
+    ORG_OUTPUT := $(OUTPUT_DIR)/org/$(CONFIG).org
     HTML_OUTPUT := $(OUTPUT_DIR)/html/$(CONFIG).html
     LAST_OPENED := $(OUTPUT_DIR)/.last-opened.$(CONFIG)
 endif
@@ -35,7 +36,7 @@ endef
 $(CONFIG_FILE):
 	cp template.md $(CONFIG_FILE)
 
-$(OUTPUT_DIR)/docx $(OUTPUT_DIR)/html:
+$(OUTPUT_DIR)/docx $(OUTPUT_DIR)/html $(OUTPUT_DIR)/org:
 	@mkdir -p $@
 
 $(DOCX_OUTPUT): $(CONFIG_FILE) | $(OUTPUT_DIR)/docx
@@ -45,6 +46,12 @@ $(DOCX_OUTPUT): $(CONFIG_FILE) | $(OUTPUT_DIR)/docx
 		--reference-doc=$(DOCX_REF) \
 		$(FILTERS) \
 		-o $(DOCX_OUTPUT)
+
+$(ORG_OUTPUT): $(CONFIG_FILE) | $(OUTPUT_DIR)/org
+	@pandoc -s $(CONFIG_FILE) \
+		-f markdown -t org \
+		$(FILTERS) \
+		-o $(ORG_OUTPUT)
 
 $(HTML_OUTPUT): $(CONFIG_FILE) | $(OUTPUT_DIR)/html
 	@pandoc -s $(CONFIG_FILE) \
@@ -59,6 +66,10 @@ docx: $(DOCX_OUTPUT)
 html: $(HTML_OUTPUT)
 	$(call require-config,$@)
 	@echo "html" > $(LAST_OPENED)
+
+org: $(ORG_OUTPUT)
+	$(call require-config,$@)
+	@echo "org" > $(LAST_OPENED)
 
 # State tracking enables dynamic file opening based on the filetype. Each of
 # the above aliases records its associated filetype, which open draws from when
